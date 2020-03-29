@@ -1,0 +1,8 @@
+POST https://h5cdfqk5ub.execute-api.eu-central-1.amazonaws.com/test/create
+Content-Type: application/json
+
+{
+	"userName":"sampleusername",
+	"age":20,
+	"isMale":true
+}

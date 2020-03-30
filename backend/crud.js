@@ -6,7 +6,7 @@ module.exports.create = corsWrapper(async event => {
   try {
     await docClient
       .put({
-        TableName: process.env.DYNAMODB_TABLE,
+        TableName: process.env.DYNAMODB_CRUD_TABLE,
         Item: JSON.parse(event.body)
       })
       .promise();

@@ -1,11 +1,15 @@
-
 service: first-serverless
+
+package:
+  exclude:
+    - node_modules/**
 
 provider:
   name: aws
   runtime: nodejs12.x
   environment:
-    DYNAMODB_TABLE: userTable
+    DYNAMODB_CRUD_TABLE: userTable
+    DYNAMODB_CRON_TABLE: cronLogTable
   region: eu-central-1
   stage: test
 
@@ -15,7 +19,9 @@ provider:
         - dynamodb:Scan
         - dynamodb:UpdateItem
         - dynamodb:PutItem
-      Resource: "arn:aws:dynamodb:*:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+      Resource:
+        - "arn:aws:dynamodb:*:*:table/${self:provider.environment.DYNAMODB_CRUD_TABLE}"
+        - "arn:aws:dynamodb:*:*:table/${self:provider.environment.DYNAMODB_CRON_TABLE}"
 
 
 functions:
@@ -26,6 +32,11 @@ functions:
           path: create
           method: post
           cors: true
+### this function call infinity
+#  cron:
+#    handler: backend/cron.handler
+#    events:
+#      - schedule: rate(1 minute)
 
 
 resources:
@@ -33,12 +44,25 @@ resources:
     userTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        TableName: ${self:provider.environment.DYNAMODB_CRUD_TABLE}
         AttributeDefinitions:
           - AttributeName: userName
             AttributeType: S
         KeySchema:
           - AttributeName: userName
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    cronLogTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_CRON_TABLE}
+        AttributeDefinitions:
+          - AttributeName: triggerDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: triggerDate
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

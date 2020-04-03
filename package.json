@@ -6,14 +6,35 @@
   "dependencies": {
     "aws-sdk": "^2.648.0"
   },
-
-  "devDependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "serverless": "^1.67.0",
+    "serverless-finch": "^2.5.2"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "serverless invoke local -f create -p backend/event.json",
+    "build": "babel backend/* --out-dir backend/dist",
+    "deploy:backend": "npm run build && serverless deploy",
+    "deploy:frontend": "serverless client deploy"
   },
   "prettier": {
     "singleQuote": true,
     "printWidth": 110
+  },
+  "babel": {
+    "sourceMaps": true,
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "12"
+          }
+        }
+      ]
+    ]
   },
   "keywords": [],
   "author": "",

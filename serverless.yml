@@ -26,7 +26,7 @@ provider:
 
 functions:
   create:
-    handler: backend/crud.create
+    handler: backend/dist/crud.create
     events:
       - http:
           path: create
@@ -37,6 +37,15 @@ functions:
 #    handler: backend/cron.handler
 #    events:
 #      - schedule: rate(1 minute)
+
+
+plugins:
+ - serverless-finch # If you want to deploy the front-end uncomment this and the "custom" object below
+
+custom:
+  client:
+    bucketName: first-serverless-frontend # If you want to deploy the front-end, change this to a universally unique AWS S3 bucket name
+    distributionFolder: frontend/dist
 
 
 resources:
